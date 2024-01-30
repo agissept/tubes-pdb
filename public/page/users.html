@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="../style/style.css" rel="stylesheet">
+</head>
+
+<body>
+<div class="navbar bg-base-100">
+    <div class="navbar-start">
+        <div class="dropdown">
+            <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                     stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16"/>
+                </svg>
+            </div>
+            <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+                <li><a href="/users">Customer</a></li>
+                <li><a href="/products">Produk</a></li>
+            </ul>
+        </div>
+        <a href="/" class="btn btn-ghost text-xl">Sebuah Aplikasi</a>
+    </div>
+    <div class="navbar-center hidden lg:flex">
+        <ul class="menu menu-horizontal px-1">
+            <li><a href="/users">Customer</a></li>
+            <li><a href="/products">Produk</a></li>
+        </ul>
+    </div>
+</div>
+
+<div class="p-10">
+
+    <h1 class="text-xl font-bold">Manajemen Customer</h1>
+
+    <div class="divider"></div>
+
+    <button class="btn bg-gray-200 fixed bottom-[50px] right-[50px]" onclick="add_modal.showModal()">Tambah Customer
+
+    </button>
+    <div class="p-10 overflow-x-auto">
+        <table class="table table-zebra">
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nama</th>
+                <th>Alamat</th>
+                <th>Nomor Telepon</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+    </div>
+</div>
+<dialog id="add_modal" class="modal">
+    <div class="modal-box">
+        <h3 class="font-bold text-lg">Tambah</h3>
+        <label class="form-control w-full max-w-xs">
+            <div class="label">
+                <span class="label-text">Nama Customer</span>
+            </div>
+            <input type="text" id="customer-name" name="name" class="input input-bordered w-[400px]" required>
+        </label>
+        <label class="form-control w-full max-w-xs">
+            <div class="label">
+                <span class="label-text">Alamat</span>
+            </div>
+            <textarea id="customer-address" name="address" class="textarea textarea-bordered resize-none w-[400px]"
+                      required></textarea>
+        </label>
+        <label class="form-control w-full max-w-xs">
+            <div class="label">
+                <span class="label-text">Nomor Telepon</span>
+            </div>
+            <input type="number" id="phone-number" name="phoneNumber" class="input input-bordered w-[400px]" required>
+        </label>
+
+        <button id="submit-btn" class="btn bg-gray-200 py-2 px-5 mt-2">Submit</button>
+    </div>
+
+    <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+    </form>
+</dialog>
+
+<dialog id="edit-modal" class="modal">
+    <div class="modal-box">
+        <h3 class="font-bold text-lg">Edit</h3>
+        <label class="form-control w-full max-w-xs">
+            <div class="label">
+                <span class="label-text">Id</span>
+            </div>
+            <input type="text" id="edit-customer-id" name="name" class="input input-bordered w-[400px]" disabled>
+        </label>
+        <label class="form-control w-full max-w-xs">
+            <div class="label">
+                <span class="label-text">Nama Customer</span>
+            </div>
+            <input type="text" id="edit-customer-name" name="name" class="input input-bordered w-[400px]" required>
+        </label>
+        <label class="form-control w-full max-w-xs">
+            <div class="label">
+                <span class="label-text">Alamat</span>
+            </div>
+            <textarea id="edit-customer-address" name="address" class="textarea textarea-bordered resize-none w-[400px]"
+                      required></textarea>
+        </label>
+        <label class="form-control w-full max-w-xs">
+            <div class="label">
+                <span class="label-text">Nomor Telepon</span>
+            </div>
+            <input type="number" id="edit-phone-number" name="phoneNumber" class="input input-bordered w-[400px]"
+                   required>
+        </label>
+
+        <button id="submit-btn-edit" class="btn bg-gray-200 py-2 px-5 mt-2">Submit</button>
+    </div>
+
+    <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+    </form>
+</dialog>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    refreshData()
+
+    // ======================================== api ==================================
+    function storeUser() {
+        axios({
+            method: 'post',
+            url: '/api/users',
+            data: {
+                name: document.querySelector('#customer-name').value,
+                address: document.querySelector('#customer-address').value,
+                phoneNumber: document.querySelector('#phone-number').value
+            }
+        });
+        refreshData()
+    }
+
+    function deleteUser(userId) {
+        axios({
+            method: 'delete',
+            url: `/api/users/${userId}`,
+        });
+        refreshData()
+    }
+
+    function editUser() {
+        const userId = document.querySelector('#edit-customer-id').value
+        axios({
+            method: 'PUT',
+            url: `/api/users/${userId}`,
+            data: {
+                name: document.querySelector('#edit-customer-name').value,
+                address: document.querySelector('#edit-customer-address').value,
+                phoneNumber: document.querySelector('#edit-phone-number').value,
+            }
+        });
+        refreshData()
+    }
+
+    function refreshData() {
+        fetch('/api/users').then(response => response.json()).then(users => renderUsers(users))
+    }
+
+    // ======================================== ui ==================================
+    function renderUsers(users) {
+        let rows = ''
+        users.forEach(user => {
+            rows += `<tr id="row-${user.id}">
+                        <td>${user.id}</td>
+                        <td>${user.name}</td>
+                        <td>${user.address}</td>
+                        <td>${user.phoneNumber}</td>
+                        <td>
+                            <button class="edit-btn btn bg-gray-200" value="${user.id}">Edit</button>
+                            <button class="delete-btn btn bg-red-300" value="${user.id}">Delete</button>
+                        </td>
+                      </tr>`
+        })
+
+        document.querySelector('tbody').innerHTML = rows
+        onUsersRendered()
+    }
+
+    function showModalEdit(userId) {
+        document.querySelector('#edit-modal').showModal()
+        const row = document.querySelector(`#row-${userId}`)
+        document.querySelector('#edit-customer-id').value = row.querySelector(':nth-child(1)').innerText
+        document.querySelector('#edit-customer-name').value = row.querySelector(':nth-child(2)').innerText
+        document.querySelector('#edit-customer-address').value = row.querySelector(':nth-child(3)').innerText
+        document.querySelector('#edit-phone-number').value = row.querySelector(':nth-child(4)').innerText
+    }
+
+    function onUsersRendered() {
+        document.querySelector('#submit-btn').addEventListener('click', () => {
+            storeUser()
+            document.querySelector('#add_modal').close()
+        })
+
+        Array.from(document.querySelectorAll('.delete-btn')).forEach((button) => {
+            button.addEventListener('click', () => deleteUser(button.value))
+        })
+
+        Array.from(document.querySelectorAll('.edit-btn')).forEach((button) => {
+            button.addEventListener('click', () => showModalEdit(button.value))
+        })
+
+        document.querySelector('#submit-btn-edit').addEventListener('click', () => {
+            editUser()
+            document.querySelector('#edit-modal').close()
+        })
+    }
+</script>
+</body>
+</html>
