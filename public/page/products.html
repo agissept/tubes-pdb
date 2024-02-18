@@ -1,35 +1,328 @@
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link href="../style/style.css" rel="stylesheet">
-</head>
+    <link href="../style/style.css" rel="stylesheet" />
+  </head>
 
-<body>
-<div class="navbar bg-base-100">
-    <div class="navbar-start">
+  <body>
+    <div class="navbar bg-base-100">
+      <div class="navbar-start">
         <div class="dropdown">
-            <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                     stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16"/>
-                </svg>
-            </div>
-            <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
-                <li><a href="/users">Customer</a></li>
-                <li><a href="/products">Produk</a></li>
-            </ul>
-        </div>
-        <a href="/" class="btn btn-ghost text-xl">Sebuah Aplikasi</a>
-    </div>
-    <div class="navbar-center hidden lg:flex">
-        <ul class="menu menu-horizontal px-1">
+          <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h8m-8 6h16"
+              />
+            </svg>
+          </div>
+          <ul
+            tabindex="0"
+            class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
+          >
             <li><a href="/users">Customer</a></li>
             <li><a href="/products">Produk</a></li>
+          </ul>
+        </div>
+        <a href="/" class="btn btn-ghost text-xl">Sebuah Aplikasi</a>
+      </div>
+      <div class="navbar-center hidden lg:flex">
+        <ul class="menu menu-horizontal px-1">
+          <li><a href="/users">Customer</a></li>
+          <li><a href="/products">Produk</a></li>
         </ul>
+      </div>
     </div>
-</div>
-<div>
-    <h1 class="text-center mt-[200px] text-5xl font-bold">Coming Soon</h1>
-</div>
-</body>
+
+    <div class="p-10">
+      <h1 class="text-xl font-bold">Manajemen Products</h1>
+
+      <div class="divider"></div>
+
+      <button
+        class="btn bg-gray-200 fixed bottom-[50px] right-[50px]"
+        onclick="showAddModal()"
+      >
+        Tambah Produk
+      </button>
+
+      <div class="p-10 overflow-x-auto">
+        <table class="table table-zebra">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Stock</th>
+              <th>Price</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+    <!-- Add Product Modal -->
+    <dialog id="add_modal" class="modal">
+      <div class="modal-box">
+        <h3 class="font-bold text-lg">Add New Product</h3>
+        <form id="add-product-form">
+          <label class="form-control w-full max-w-xs">
+            <div class="label">
+              <span class="label-text">Product Name</span>
+            </div>
+            <input
+              type="text"
+              id="add-product-name"
+              class="input input-bordered w-[400px]"
+              required
+            />
+          </label>
+          <label class="form-control w-full max-w-xs">
+            <div class="label">
+              <span class="label-text">Stock</span>
+            </div>
+            <input
+              type="number"
+              id="add-product-stock"
+              class="input input-bordered w-[400px]"
+              required
+            />
+          </label>
+          <label class="form-control w-full max-w-xs">
+            <div class="label">
+              <span class="label-text">Price</span>
+            </div>
+            <input
+              type="number"
+              id="add-product-price"
+              class="input input-bordered w-[400px]"
+              required
+            />
+          </label>
+          <div class="modal-action">
+            <button id="submit-btn" class="btn bg-gray-200 py-2 px-5 mt-2">
+              Tambah
+            </button>
+            <button
+              type="button"
+              class="btn py-2 px-5 mt-2"
+              onclick="closeAddModal()"
+            >
+              Close
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+      </form>
+    </dialog>
+
+    <!-- Edit Product Modal -->
+    <dialog id="edit-modal" class="modal">
+      <div class="modal-box">
+        <h3 class="font-bold text-lg">Edit Product</h3>
+        <form id="edit-product-form">
+          <input type="hidden" id="edit-product-id" />
+          <label class="form-control w-full max-w-xs">
+            <div class="label">
+              <span class="label-text">Product Name</span>
+            </div>
+            <input
+              type="text"
+              id="edit-product-name"
+              class="input input-bordered w-[400px]"
+              required
+            />
+          </label>
+          <label class="form-control w-full max-w-xs">
+            <div class="label">
+              <span class="label-text">Stock</span>
+            </div>
+            <input
+              type="number"
+              id="edit-product-stock"
+              class="input input-bordered w-[400px]"
+              required
+            />
+          </label>
+          <label class="form-control w-full max-w-xs">
+            <div class="label">
+              <span class="label-text">Price</span>
+            </div>
+            <input
+              type="number"
+              id="edit-product-price"
+              class="input input-bordered w-[400px]"
+              required
+            />
+          </label>
+          <div class="modal-action">
+            <button id="submit-btn-edit" class="btn bg-gray-200 py-2 px-5 mt-2">
+              Update
+            </button>
+            <button
+              type="button"
+              class="btn py-2 px-5 mt-2"
+              onclick="closeEditModal()"
+            >
+              Close
+            </button>
+          </div>
+        </form>
+      </div>
+      <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+      </form>
+    </dialog>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      refreshData();
+
+      function refreshData() {
+        fetch("/api/products")
+          .then((response) => response.json())
+          .then((products) => renderProducts(products));
+      }
+
+      function renderProducts(products) {
+        let rows = "";
+        products.forEach((product) => {
+          rows += `
+                  <tr id="row-${product.id}">
+                      <td>${product.id}</td>
+                      <td>${product.name}</td>
+                      <td>${product.stock}</td>
+                      <td>${product.price}</td>
+                      <td>
+                          <button class="edit-btn btn bg-gray-200" onclick="showEditModal(${product.id})">Edit</button>
+                          <button class="delete-btn btn bg-red-300" onclick="deleteProduct(${product.id})">Delete</button>
+                      </td>
+                  </tr>`;
+        });
+        document.querySelector("tbody").innerHTML = rows;
+      }
+
+      function showAddModal() {
+        document.getElementById("add-product-name").value = "";
+        document.getElementById("add-product-stock").value = "";
+        document.getElementById("add-product-price").value = "";
+        document.getElementById("add_modal").showModal();
+      }
+
+      function closeAddModal() {
+        document.getElementById("add_modal").close();
+      }
+
+      function showEditModal(productId) {
+        document.querySelector("#edit-modal").showModal();
+        const row = document.querySelector(`#row-${productId}`);
+        document.querySelector("#edit-product-id").value =
+          row.querySelector(":nth-child(1)").innerText;
+        document.querySelector("#edit-product-name").value =
+          row.querySelector(":nth-child(2)").innerText;
+        document.querySelector("#edit-product-stock").value =
+          row.querySelector(":nth-child(3)").innerText;
+        document.querySelector("#edit-product-price").value =
+          row.querySelector(":nth-child(4)").innerText;
+      }
+
+      function closeEditModal() {
+        document.getElementById("edit-modal").close();
+      }
+
+      // Store (add) a new product
+      document
+        .getElementById("add-product-form")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+          storeProduct();
+        });
+
+      function storeProduct() {
+        axios({
+          method: "post",
+          url: "/api/products",
+          data: {
+            name: document.querySelector("#add-product-name").value,
+            stock: parseInt(document.querySelector("#add-product-stock").value),
+            price: parseFloat(
+              document.querySelector("#add-product-price").value
+            ),
+          },
+        })
+          .then(() => {
+            closeAddModal();
+            refreshData();
+          })
+          .catch((error) => {
+            console.error("Error creating product:", error);
+          });
+      }
+
+      // Edit an existing product
+      document
+        .getElementById("edit-product-form")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+          editProduct();
+        });
+
+      // Update product
+      function editProduct() {
+        const productId = document.querySelector("#edit-product-id").value;
+        axios({
+          method: "put",
+          url: `/api/products/${productId}`,
+          data: {
+            name: document.querySelector("#edit-product-name").value,
+            stock: parseInt(
+              document.querySelector("#edit-product-stock").value
+            ),
+            price: parseFloat(
+              document.querySelector("#edit-product-price").value
+            ),
+          },
+        })
+          .then(() => {
+            closeEditModal();
+            refreshData();
+          })
+          .catch((error) => {
+            console.error("Error updating product:", error);
+          });
+      }
+
+      // Delete product
+      function deleteProduct(productId) {
+        const row = document.querySelector(`#row-${productId}`);
+
+        if (
+          confirm(
+            `Apakah Anda yakin ingin menghapus produk ${
+              row.querySelector(":nth-child(2)").innerText
+            } ?`
+          )
+        ) {
+          axios
+            .delete(`/api/products/${productId}`)
+            .then(() => refreshData())
+            .catch((error) => console.error("Error deleting product:", error));
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -1,19 +1,20 @@
-import 'dotenv/config'
-import express from 'express'
+import "dotenv/config";
+import express from "express";
 import pages from "./routes/pages.js";
-import api from "./routes/api-users.js";
+import apiUsers from "./routes/api-users.js";
+import apiProducts from "./routes/api-products.js";
 
-const app = express()
-const port = 3000
+const app = express();
+const port = 3000;
 
-app.use(express.static('public'));
-app.use(express.json())
-app.use(express.urlencoded({extended: true}))
+app.use(express.static("public"));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.use('/', pages)
-app.use('/api', api)
-
+app.use("/", pages);
+app.use("/api", apiUsers);
+app.use("/api", apiProducts);
 
 app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
-})
+  console.log(`Example app listening on port ${port}`);
+});
