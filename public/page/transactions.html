@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link href="../style/style.css" rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/tom-select@2.0.0/dist/css/tom-select.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2/dist/js/tom-select.complete.min.js"></script>
+  </head>
+
+  <body>
+    <div class="navbar bg-base-100">
+      <div class="navbar-start">
+        <div class="dropdown">
+          <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h8m-8 6h16"
+              />
+            </svg>
+          </div>
+          <ul
+            tabindex="0"
+            class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
+          >
+            <li><a href="/users">Customer</a></li>
+            <li><a href="/products">Produk</a></li>
+            <li><a href="/transactions">Transactions</a></li>
+          </ul>
+        </div>
+        <a href="/" class="btn btn-ghost text-xl">Sebuah Aplikasi</a>
+      </div>
+      <div class="navbar-center hidden lg:flex">
+        <ul class="menu menu-horizontal px-1">
+          <li><a href="/users">Customer</a></li>
+          <li><a href="/products">Produk</a></li>
+          <li><a href="/transactions">Transactions</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="p-10">
+      <h1 class="text-xl font-bold">Manajemen Transaction</h1>
+
+      <div class="divider"></div>
+
+      <button
+        class="btn bg-gray-200 fixed bottom-[50px] right-[50px] add-transaction z-50"
+      >
+        Tambah Transaksi
+      </button>
+
+      <div class="p-10 overflow-x-auto">
+        <table class="table table-zebra">
+          <thead>
+            <tr>
+              <th>ID Pelanggan</th>
+              <th>Tanggal Transaksi</th>
+              <th>Kurir</th>
+              <th>Harga Pengiriman</th>
+              <th>Total Harga Item</th>
+              <th>Total Akhir</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Add transaction Modal -->
+    <dialog id="add-transaction-modal" class="modal">
+      <div class="modal-box">
+        <h3 class="font-bold text-lg">Add New Transaction</h3>
+        <form id="add-transaction-form">
+          <label class="form-control w-full max-w-xs">
+            <div class="label">
+              <span class="label-text">Select Costumer</span>
+            </div>
+            <select
+              class="select select-bordered w-[400px]"
+              required
+              id="customer-select"
+            ></select>
+          </label>
+
+          <div class="label">
+            <span class="label-text">Item Transactions</span>
+          </div>
+          <div id="item-container"></div>
+
+          <div class="flex justify-end">
+            <button
+              type="button"
+              class="btn bg-gray-200 mt-2 add-item text-right"
+            >
+              + item
+            </button>
+          </div>
+
+          <label class="form-control w-full max-w-xs">
+            <div class="label">
+              <span class="label-text">Courier</span>
+            </div>
+            <input
+              type="text"
+              name="courier"
+              id="courier"
+              value="SiCepat"
+              class="input input-bordered w-[400px]"
+              required
+              disabled
+            />
+          </label>
+
+          <label class="form-control w-full max-w-xs">
+            <div class="label">
+              <span class="label-text">Shipping Price</span>
+            </div>
+            <input
+              type="number"
+              name="shipping-price"
+              id="shipping-price"
+              value="10000"
+              class="input input-bordered w-[400px]"
+              required
+            />
+          </label>
+
+          <div class="modal-action">
+            <button
+              type="submit"
+              id="submit-btn"
+              class="btn bg-gray-200 py-2 px-5 mt-2"
+            >
+              Tambah
+            </button>
+            <button type="button" class="btn py-2 px-5 mt-2 close">
+              Close
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+      </form>
+    </dialog>
+
+    <!-- Edit transaction Modal -->
+    <dialog id="edit-transaction-modal" class="modal">
+      <div class="modal-box">
+        <h3 class="font-bold text-lg">Edit Transaction</h3>
+        <form id="edit-transaction-form">
+          <label class="form-control w-full max-w-xs">
+            <input
+              type="hidden"
+              name="invoiceid"
+              id="invoiceid"
+              required
+              disabled
+            />
+
+            <div class="label">
+              <span class="label-text">Select Costumer</span>
+            </div>
+            <select
+              class="select select-bordered w-[400px]"
+              required
+              id="customer-select"
+            ></select>
+          </label>
+
+          <div class="label">
+            <span class="label-text">Item Transactions</span>
+          </div>
+          <div id="item-container"></div>
+
+          <div class="flex justify-end">
+            <button
+              type="button"
+              class="btn bg-gray-200 mt-2 add-item text-right"
+            >
+              + item
+            </button>
+          </div>
+
+          <label class="form-control w-full max-w-xs">
+            <div class="label">
+              <span class="label-text">Courier</span>
+            </div>
+            <input
+              type="text"
+              name="courier"
+              id="courier"
+              value="SiCepat"
+              class="input input-bordered w-[400px]"
+              required
+              disabled
+            />
+          </label>
+
+          <label class="form-control w-full max-w-xs">
+            <div class="label">
+              <span class="label-text">Shipping Price</span>
+            </div>
+            <input
+              type="number"
+              name="shipping-price"
+              id="shipping-price"
+              value="10000"
+              class="input input-bordered w-[400px]"
+              required
+            />
+          </label>
+
+          <div class="modal-action">
+            <button
+              type="submit"
+              id="submit-btn"
+              class="btn bg-gray-200 py-2 px-5 mt-2"
+            >
+              Update
+            </button>
+            <button type="button" class="btn py-2 px-5 mt-2 close">
+              Close
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+      </form>
+    </dialog>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      refreshData();
+
+      function refreshData() {
+        fetch("/api/transactions")
+          .then((response) => response.json())
+          .then((transactions) => renderProducts(transactions));
+      }
+
+      const addTransactionbtn = document.querySelector(".add-transaction");
+
+      // Modal Add Atr
+      const addTransactionModal = document.getElementById(
+          "add-transaction-modal"
+        ),
+        addCostumerSelect =
+          addTransactionModal.querySelector("#customer-select"),
+        addItemContainer = addTransactionModal.querySelector("#item-container"),
+        CloseaddTransactionModal = addTransactionModal.querySelector(".close");
+
+      // Modal edit Atr
+      const editTransactionModal = document.getElementById(
+          "edit-transaction-modal"
+        ),
+        editInvoiceID = editTransactionModal.querySelector("#invoiceid"),
+        editCostumerSelect =
+          editTransactionModal.querySelector("#customer-select"),
+        editItemContainer =
+          editTransactionModal.querySelector("#item-container"),
+        editShippingPrice =
+          editTransactionModal.querySelector("#shipping-price"),
+        CloseeditTransactionModal =
+          editTransactionModal.querySelector(".close");
+
+      // Open Add Modal
+      addTransactionbtn.addEventListener("click", function () {
+        addItemContainer.innerHTML = "";
+        addTransactionModal.showModal();
+        addItemContainer.appendChild(SetItemInput());
+        initializeCustomerSelect(addCostumerSelect);
+      });
+      // Close Add Modal
+      CloseaddTransactionModal.addEventListener("click", function () {
+        addTransactionModal.close();
+      });
+
+      CloseeditTransactionModal.addEventListener("click", function () {
+        editTransactionModal.close();
+      });
+
+      function renderProducts(transactions) {
+        let rows = "";
+        transactions.forEach((transaction) => {
+          const transactionData = JSON.stringify(transaction);
+          rows += `
+                        <tr id="row-${transaction.id}">
+                              <td>${transaction.customer_id}</td>
+                              <td>${transaction.transaction_date}</td>
+                              <td>${transaction.courier}</td>
+                              <td>${transaction.shipping_price}</td>
+                              <td>${transaction.items_price_total}</td>
+                              <td>${transaction.grand_total}</td>
+                              <td>
+                                <button class="edit-btn btn bg-gray-200" data-transaction='${transactionData}'>Edit</button>
+                                <button class="delete-btn btn bg-red-300" data-id="${transaction.id}">Delete</button>
+                              </td>
+                        </tr>`;
+        });
+        const tbody = document.querySelector("tbody");
+        tbody.innerHTML = rows;
+
+        // edit-btn listener
+        tbody.querySelectorAll(".edit-btn").forEach((button) => {
+          button.addEventListener("click", function () {
+            const transactionData = JSON.parse(this.dataset.transaction);
+            editItemContainer.innerHTML = "";
+            initializeCustomerSelect(
+              editCostumerSelect,
+              transactionData.customer_id
+            );
+            editTransactionModal.showModal();
+            transactionData.items.forEach((item) => {
+              let itemid = item.item_id;
+              let productid = item.product_id;
+              let qty = item.quantity;
+              let price = item.sub_total;
+              editItemContainer.appendChild(
+                SetItemInput({ productid, itemid, qty, price })
+              );
+            });
+            editShippingPrice.value = transactionData.shipping_price;
+            editInvoiceID.value = transactionData.id;
+            //console.log(transactionData);
+          });
+        });
+
+        tbody.querySelectorAll(".delete-btn").forEach((button) => {
+          button.addEventListener("click", function () {
+            const row = document.querySelector(`#row-${this.dataset.id}`);
+
+            if (
+              confirm(
+                `Apakah Anda yakin ingin menghapus Invoice dengan ID ${this.dataset.id} ?`
+              )
+            ) {
+              axios
+                .delete(`/api/transactions/${this.dataset.id}`)
+                .then(() => refreshData())
+                .catch((error) =>
+                  console.error("Error deleting product:", error)
+                );
+            }
+          });
+        });
+      }
+
+      // Store (add) a new Transaction
+      document
+        .getElementById("add-transaction-form")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          const transactionData = {
+            customer_id:
+              addTransactionModal.querySelector("#customer-select").value,
+            courier: addTransactionModal.querySelector("#courier").value,
+            shipping_price:
+              addTransactionModal.querySelector("#shipping-price").value,
+            items: [],
+          };
+
+          addTransactionModal
+            .querySelectorAll("#item-container .join")
+            .forEach((item) => {
+              const productId = item.querySelector(
+                "[name='product_id[]']"
+              ).value;
+              const quantity = item.querySelector("[name='quantity[]']").value;
+              const subTotal = item.querySelector("[name='sub_total[]']").value;
+
+              transactionData.items.push({
+                product_id: productId,
+                quantity: quantity,
+                sub_total: subTotal,
+              });
+            });
+
+          // Mengirim data transaksi
+          axios
+            .post("/api/transactions", transactionData)
+            .then(() => {
+              addTransactionModal.close();
+              refreshData();
+            })
+            .catch((error) => {
+              console.error("Error submitting transaction:", error);
+            });
+        });
+
+      // update (edit) Transaction
+      document
+        .getElementById("edit-transaction-form")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          const transactionData = {
+            invoice_id: editTransactionModal.querySelector("#invoiceid").value,
+            customer_id:
+              editTransactionModal.querySelector("#customer-select").value,
+            courier: editTransactionModal.querySelector("#courier").value,
+            shipping_price:
+              editTransactionModal.querySelector("#shipping-price").value,
+            items: [],
+          };
+
+          editTransactionModal
+            .querySelectorAll("#item-container .join")
+            .forEach((item) => {
+              const itemId = item.querySelector("[name='item_id[]']").value;
+              const productId = item.querySelector(
+                "[name='product_id[]']"
+              ).value;
+              const quantity = item.querySelector("[name='quantity[]']").value;
+              const subTotal = item.querySelector("[name='sub_total[]']").value;
+
+              transactionData.items.push({
+                id: itemId,
+                product_id: productId,
+                quantity: quantity,
+                sub_total: subTotal,
+              });
+            });
+
+          // console.log(transactionData);
+
+          // Mengirim data transaksi
+          axios({
+            method: "put",
+            url: `/api/transactions/${transactionData.invoice_id}`,
+            data: transactionData,
+          })
+            .then(() => {
+              editTransactionModal.close();
+              refreshData();
+            })
+            .catch((error) => {
+              console.error("Error updating product:", error);
+            });
+        });
+
+      function initializeCustomerSelect(selectElement, selectedCustomerId) {
+        if (!selectElement) {
+          selectElement = document.createElement("select");
+        }
+
+        fetch("/api/users")
+          .then((response) => response.json())
+          .then((customers) => {
+            selectElement.innerHTML = "";
+
+            customers.forEach((customer) => {
+              const option = new Option(
+                `${customer.id} - ${customer.name}`,
+                customer.id
+              );
+
+              if (customer.id === selectedCustomerId) {
+                option.selected = true;
+              }
+              selectElement.add(option);
+            });
+          })
+          .catch((error) => {
+            console.error("Error fetching customers:", error);
+          });
+
+        return selectElement;
+      }
+
+      addTransactionModal
+        .querySelector(".add-item")
+        .addEventListener("click", function () {
+          addItemContainer.appendChild(SetItemInput());
+        });
+
+      editTransactionModal
+        .querySelector(".add-item")
+        .addEventListener("click", function () {
+          editItemContainer.appendChild(SetItemInput());
+        });
+
+      function SetItemInput(val = null) {
+        let defaults = {
+          append: true,
+          elementid: `new-item`,
+          productid: null,
+          qty: null,
+          price: null,
+          itemid: null,
+        };
+
+        let opts = { ...defaults, ...val };
+        let TargetID = document.getElementById(opts.elementid);
+        let MaxStock = 0;
+
+        // Get Data Product
+        fetch("/api/products")
+          .then((response) => response.json())
+          .then((products) => {
+            // Temukan produk pertama dengan stock lebih dari 0
+            let firstProduct = products.find((product) => product.stock > 0);
+            opts.price = opts.price === null ? firstProduct.price : opts.price;
+            products.forEach((productData) => {
+              selectProduct.appendChild(createOptionProduct(productData));
+            });
+            inputPrice.value = opts.price;
+          });
+
+        // create option
+        const createOptionProduct = (product) => {
+          let option = document.createElement("option");
+          option.value = product.id;
+          option.textContent = product.name;
+          option.dataset.stock = product.stock;
+          option.dataset.price = product.price;
+          option.selected = product.id === opts.productid;
+          if (opts.productid || product.stock == 0)
+            option.disabled =
+              product.id !== opts.productid || product.stock == 0;
+          return option;
+        };
+
+        // Select Product
+        let selectProduct = document.createElement("select");
+        selectProduct.className = "select select-bordered join-item w-[200px]";
+        selectProduct.name = "product_id[]";
+
+        // item_id
+        let InputItemID = document.createElement("input");
+        InputItemID.type = "hidden";
+        InputItemID.value = opts.itemid;
+        InputItemID.name = "item_id[]";
+
+        // qty
+        let inputQty = document.createElement("input");
+        inputQty.type = "number";
+        inputQty.min = 1;
+        inputQty.value = opts.qty;
+        inputQty.name = "quantity[]";
+        inputQty.className = "input input-bordered join-item w-[80px]";
+        inputQty.placeholder = "Qty";
+        inputQty.value = opts.qty === null ? 1 : parseInt(opts.qty);
+
+        // total item
+        let inputPrice = document.createElement("input");
+        inputPrice.type = "number";
+        inputPrice.name = "sub_total[]";
+        inputPrice.className = "input input-bordered join-item w-[100px]";
+        inputPrice.placeholder = "Price";
+        // inputPrice.value = opts.price;
+        inputPrice.readOnly = true;
+
+        // delete product btn
+        let deleteProduct = document.createElement("button");
+        deleteProduct.textContent = "X";
+        deleteProduct.className = "btn btn-error join-item";
+        deleteProduct.type = "button";
+        if (opts.itemid) deleteProduct.dataset.id = opts.itemid;
+        deleteProduct.addEventListener("click", function () {
+          console.log(opts.itemid);
+          if ("id" in this.dataset && this.dataset.id) {
+            // axios
+            //   .delete(`/api/item-transaction/${this.dataset.id}`)
+            //   .then(() => {
+            //     refreshData();
+            //     console.log("Item deleted successfully");
+            //     this.closest(".join").remove();
+            //   })
+            //   .catch((error) => {
+            //     console.error("Error deleting product:", error);
+            //   });
+          } else {
+            this.closest(".join").remove();
+          }
+        });
+
+        // let InputGroup = document.createElement("div");
+        // InputGroup.classList.add("join", "mb-3");
+        // InputGroup.innerHTML = `<div>${selectProduct}</div>
+        //                         <input type="number" min="1" class="input input-bordered join-item w-[80px]" placeholder="Qty">
+        //                         <input type="number" min="1" class="input input-bordered join-item w-[100px]" placeholder="Price" readonly="">
+        //                         <div class="indicator">
+        //                           <button class="btn btn-error join-item">X</button>
+        //                         </div>`;
+
+        function updatePrice() {
+          let selectedOption =
+            selectProduct.options[selectProduct.selectedIndex];
+          let pricePerUnit = selectedOption.getAttribute("data-price");
+          let totalPrice =
+            parseInt(inputQty.value || 0) * parseInt(pricePerUnit);
+          inputPrice.value = totalPrice;
+        }
+
+        selectProduct.addEventListener("change", function () {
+          // get selected product
+          let selectedOption = this.options[this.selectedIndex];
+          let stock = selectedOption.getAttribute("data-stock");
+          MaxStock =
+            opts.qty === null ? stock : parseInt(stock) + parseInt(opts.qty);
+          console.log(parseInt(stock) + parseInt(opts.qty));
+          // Set max inputQty berdasarkan stock
+          inputQty.max = MaxStock;
+          inputQty.min = opts.qty === null ? 1 : parseInt(opts.qty);
+          // Setelah mengubah opsi, reset jumlahnya menjadi minimum
+          inputQty.value = inputQty.min;
+          updatePrice();
+        });
+
+        // listen inputQty
+        inputQty.addEventListener("input", function () {
+          let stock =
+            selectProduct.options[selectProduct.selectedIndex].getAttribute(
+              "data-stock"
+            );
+          MaxStock =
+            opts.qty === null ? stock : parseInt(stock) + parseInt(opts.qty);
+          let MinStock = opts.qty === null ? 1 : parseInt(opts.qty);
+          // Jika nilai input melebihi stok, sesuaikan menjadi nilai maksimum
+          if (parseInt(this.value) > MaxStock) {
+            this.value = MaxStock;
+          }
+
+          if (parseInt(this.value) < MinStock) {
+            this.value = MinStock;
+          }
+          updatePrice();
+        });
+
+        // Membuat container utama untuk setiap baris produk
+        let productRow = document.createElement("div");
+        productRow.className = "join mb-3";
+
+        // Tambahkan select, input, dan delete button ke productRow
+        let selectDiv = document.createElement("div");
+        selectDiv.appendChild(selectProduct);
+        selectDiv.appendChild(InputItemID);
+        productRow.appendChild(selectDiv);
+
+        productRow.appendChild(inputQty);
+        productRow.appendChild(inputPrice);
+
+        let deleteDiv = document.createElement("div");
+        deleteDiv.className = "indicator";
+
+        // Create new span element
+        let newIndicator = document.createElement("span");
+        newIndicator.className = "indicator-item badge badge-neutral";
+        newIndicator.textContent = "new";
+        if (!opts.itemid) {
+          deleteDiv.appendChild(newIndicator);
+          deleteDiv.appendChild(deleteProduct);
+        }
+        productRow.appendChild(deleteDiv);
+        return productRow;
+      }
+    </script>
+  </body>
+</html>
