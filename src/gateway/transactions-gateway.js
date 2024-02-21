@@ -8,7 +8,7 @@ async function storeTransaction(transactionData) {
     await connection.beginTransaction();
 
     const invoiceResult = await connection.query(
-      "INSERT INTO invoices (customer_id, courier, shipping_price) VALUES (?, ?, ?)",
+      "INSERT INTO invoices (customer_id, courier, shipping_price, transaction_date) VALUES (?, ?, ?, NOW())",
       [
         transactionData.customer_id,
         transactionData.courier,
