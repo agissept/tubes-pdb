@@ -1,0 +1,1 @@
+ALTER TABLE item_transactions ADD CONSTRAINT item_transactions_ibfk_1 FOREIGN KEY (invoice_id) REFERENCES invoices (id) ON DELETE CASCADE ON UPDATE CASCADE;
