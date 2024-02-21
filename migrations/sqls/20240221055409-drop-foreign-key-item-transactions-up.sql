@@ -1,0 +1,1 @@
+ALTER TABLE item_transactions DROP FOREIGN KEY item_transactions_ibfk_1;
